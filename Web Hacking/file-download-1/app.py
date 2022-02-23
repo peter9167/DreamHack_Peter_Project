@@ -24,8 +24,9 @@ def upload_memo():
         filename = request.form.get('filename') # Flask 요청에서 수신한 데이터(filename) 가져오기
         content = request.form.get('content').encode('utf-8') # Flask 요청에서 수신한 데이터(filename) 유니코드로 변환하여 가져오기
 
-        if filename.find('..') != -1: # filename 데이터 내 '..' 문자열 검색
-            return render_template('upload_result.html', data='bad characters,,')
+        if filename.find('..') != -1: # filename 데이터 내 '..' 문자열 검색 후 필터링
+                                      # flag.py는 uploads 없음. 상위폴더에 있기 때문에 ../ 가 쓰이게 됨
+            return render_template('upload_result.html', data='bad characters,,') # bad characters,, : 파이썬의 문자열에서 잘못된 문자 제거
 
         with open(f'{UPLOAD_DIR}/{filename}', 'wb') as f:
             f.write(content)
@@ -36,7 +37,7 @@ def upload_memo():
 
 
 @APP.route('/read')
-def read_memo():
+def read_memo(): # read_memo 함수에서는 upload_memo 함수와 같이 .. 필터링이 없는 것으로 보아 ../flag.py를 한다면 다운받을 수 있음
     error = False
     data = b''
 
